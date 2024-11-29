@@ -1,7 +1,7 @@
 class ScheduleEstimation:
     # The purpose of this class is to calculate TDEV
-    # The formula is TDEV = C * (PM)^(D + 0.2 * (E - B)) * SCED%/100
-    # C = 3.67, D = 0.28, B = 0.91, and the default for SCED% is 1
+    # The formula is TDEV = C * (PM)^(D + 0.2 * (E - B)) * SCED%
+    # C = 3.67, D = 0.28, B = 0.91, and the default for SCED% is 1.0
     # SCED% is the cost driver value
 
     # Constant Values
