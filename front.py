@@ -2,7 +2,22 @@ from tkinter import*
 from tkinter import ttk
 from process_scale_factors import DiseconomyOfScale
 from process_effort_multipliers import EffortMultiplier
+from effort_estimation import EffortEstimation
 
+
+def calculate_PM():
+    try:
+        size_value = float(SIZE_Entry.get())  # Преобразуем введённое значение в float
+    except ValueError:
+        size_value = 0.0  #
+
+    EE_Object = EffortEstimation(size=size_value,
+                                 diseconomy_of_scale=E_Scale_Factor_result,
+                                 effort_modifier=EM_Effort_Multipliiers_result)
+    PM_result = EE_Object.calculate()
+
+    PM_Print = Label(text=f"{PM_result}")
+    PM_Print.grid(column=1, row=22)
 
 #---Main Window---
 window = Tk()
@@ -14,8 +29,8 @@ EM_List = ["RELY","DATA","CPLX","RUSE","DOCU","TIME","STOR","PVOL","ACAP",
            "PCAP","APEX","PLEX","LTEX","PCON","TOOL","SITE","SCED"]
 
 
-SIZE = Label(text="SIZE")
-SIZE.grid(column=0, row=1)
+SIZE_Label = Label(text="SIZE")
+SIZE_Label.grid(column=0, row=1)
 SIZE_Entry = Entry(width=15)
 SIZE_Entry.grid(column=1, row=1)
 
@@ -47,7 +62,7 @@ for i in SF_List:
 
 ####--Effort Multiplication Loop-----
 EM_row = 4
-EM_column =3
+EM_column = 3
 
 EM_dic = {}
 
@@ -86,6 +101,14 @@ EM_Object = EffortMultiplier()
 EM_Object.update_effort_multipliers(EM_values)
 
 EM_Effort_Multipliiers_result = EM_Object.calculate_effort_multiplier()
+print(EM_Effort_Multipliiers_result)
 
+
+
+PM_label = Label(text="PM: ")
+PM_label.grid(column=0, row=21)
+
+generate_password_button = Button(text="Calculate PM", command=calculate_PM)
+generate_password_button.grid(column=0, row=23)
 
 window.mainloop()
