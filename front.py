@@ -80,7 +80,7 @@ def calculate_cost(effort_estimation):
 
 #---Main Window---
 window = Tk()
-window.title("CoCoMo2 Calculator")
+window.title("COCOMO 2 Calculator")
 window.geometry("700x700")
 
 SF_List = ["PREC", "FLEX", "RESL", "TEAM", "PMAT"]
@@ -97,11 +97,6 @@ cost_label = Label(text="Cost per Person-Month(Dollars):")
 cost_label.grid(column=0, row=2)
 cost_entry = Entry(width=15)
 cost_entry.grid(column=1, row=2)
-
-cost_label = Label(text="Cost per Person-Month(Dollars):")
-cost_label.grid(column=0, row=3)
-cost_entry = Entry(width=15)
-cost_entry.grid(column=1, row=3)
 
 SF_main = Label(window, text="Scale Factors")
 SF_main.grid(column=1, row=4)
