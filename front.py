@@ -6,6 +6,27 @@ from effort_estimation import EffortEstimation
 
 
 def calculate_PM():
+    ################### Send to process_scale_factor to get E
+
+    SF_values = {key: var.get() for key, var in SF_dic.items()}
+
+    # Create Scale Factor Object
+    SF_Object = DiseconomyOfScale()
+    SF_Object.update_scale_factors(SF_values)
+
+    # Result of Scale Factor calculation
+    E_Scale_Factor_result = SF_Object.calculate_diseconomy_of_scale()
+
+    ################### Send to process_effort_multiplication to get EM
+
+    EM_values = {key: var.get() for key, var in EM_dic.items()}
+
+    EM_Object = EffortMultiplier()
+    EM_Object.update_effort_multipliers(EM_values)
+
+    EM_Effort_Multipliiers_result = EM_Object.calculate_effort_multiplier()
+    print(EM_Effort_Multipliiers_result)
+
     try:
         size_value = float(SIZE_Entry.get())  # Преобразуем введённое значение в float
     except ValueError:
@@ -17,7 +38,7 @@ def calculate_PM():
     PM_result = EE_Object.calculate()
 
     PM_Print = Label(text=f"{PM_result}")
-    PM_Print.grid(column=1, row=22)
+    PM_Print.grid(column=1, row=21)
 
 #---Main Window---
 window = Tk()
@@ -82,26 +103,6 @@ for i in EM_List:
 
 
 
-################### Send to process_scale_factor to get E
-
-SF_values = {key: var.get() for key, var in SF_dic.items()}
-
-# Create Scale Factor Object
-SF_Object = DiseconomyOfScale()
-SF_Object.update_scale_factors(SF_values)
-
-# Result of Scale Factor calculation
-E_Scale_Factor_result = SF_Object.calculate_diseconomy_of_scale()
-
-################### Send to process_effort_multiplication to get EM
-
-EM_values = {key: var.get() for key, var in EM_dic.items()}
-
-EM_Object = EffortMultiplier()
-EM_Object.update_effort_multipliers(EM_values)
-
-EM_Effort_Multipliiers_result = EM_Object.calculate_effort_multiplier()
-print(EM_Effort_Multipliiers_result)
 
 
 
