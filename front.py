@@ -67,6 +67,15 @@ def calculate_cost(effort_estimation):
     cost_print = Label(text=f"${(effort_estimation * software_labor_rate):.2f}")
     cost_print.grid(column=1, row=24)
 
+def calculate_cost(effort_estimation):
+    try:
+        software_labor_rate = float(cost_entry.get())
+    except ValueError:
+        software_labor_rate = 0.0
+
+    cost_print = Label(text=f"${(effort_estimation * software_labor_rate):.2f}")
+    cost_print.grid(column=1, row=24)
+
 
 
 #---Main Window---
@@ -88,6 +97,11 @@ cost_label = Label(text="Cost per Person-Month(Dollars):")
 cost_label.grid(column=0, row=2)
 cost_entry = Entry(width=15)
 cost_entry.grid(column=1, row=2)
+
+cost_label = Label(text="Cost per Person-Month(Dollars):")
+cost_label.grid(column=0, row=3)
+cost_entry = Entry(width=15)
+cost_entry.grid(column=1, row=3)
 
 SF_main = Label(window, text="Scale Factors")
 SF_main.grid(column=1, row=4)
