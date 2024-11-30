@@ -67,15 +67,6 @@ def calculate_cost(effort_estimation):
     cost_print = Label(text=f"${(effort_estimation * software_labor_rate):.2f}")
     cost_print.grid(column=1, row=24)
 
-def calculate_cost(effort_estimation):
-    try:
-        software_labor_rate = float(cost_entry.get())
-    except ValueError:
-        software_labor_rate = 0.0
-
-    cost_print = Label(text=f"${(effort_estimation * software_labor_rate):.2f}")
-    cost_print.grid(column=1, row=24)
-
 
 
 #---Main Window---
