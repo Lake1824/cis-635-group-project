@@ -3,7 +3,24 @@ from tkinter import ttk
 from process_scale_factors import DiseconomyOfScale
 from process_effort_multipliers import EffortMultiplier
 from effort_estimation import EffortEstimation
+from schedule_estimation import ScheduleEstimation
+from team_size import TeamSize
 
+def calculate_TS(PM, TDEV):
+    TS_Object = TeamSize(PM, TDEV)
+    TS_Result = TS_Object.calculate()
+    TS_Print = Label(text=f"{TS_Result:.2f}")
+    TS_Print.grid(column=1, row=23)
+
+def calculate_TDEV(PM, E_Scale_Factor_result ):
+    SCED_value = float(SCED_Entry.get())
+
+    SE_Object = ScheduleEstimation(PM, E_Scale_Factor_result, SCED_value)
+    SE_Result = SE_Object.calculate()
+    TDEV_Print= Label(text=f"{SE_Result:.2f}")
+    TDEV_Print.grid(column=1, row=22)
+
+    calculate_TS(PM, SE_Result)
 
 def calculate_PM():
     ################### Send to process_scale_factor to get E
@@ -37,8 +54,12 @@ def calculate_PM():
                                  effort_modifier=EM_Effort_Multipliiers_result)
     PM_result = EE_Object.calculate()
 
-    PM_Print = Label(text=f"{PM_result}")
+    PM_Print = Label(text=f"{PM_result:.2f}")
     PM_Print.grid(column=1, row=21)
+
+    calculate_TDEV(PM_result, E_Scale_Factor_result)
+
+
 
 #---Main Window---
 window = Tk()
@@ -55,15 +76,21 @@ SIZE_Label.grid(column=0, row=1)
 SIZE_Entry = Entry(width=15)
 SIZE_Entry.grid(column=1, row=1)
 
+SCED_label = Label(text="SCED")
+SCED_label.grid(column=0, row=2)
+SCED_Entry = Entry(width=15)
+SCED_Entry.insert(0, 1) # Set default value
+SCED_Entry.grid(column=1, row=2)
+
 SF_main = Label(window, text="Scale Factors")
-SF_main.grid(column=1, row=3)
+SF_main.grid(column=1, row=4)
 
 EM_main = Label(window, text="Effort Multiplication")
-EM_main.grid(column=3, row=3)
+EM_main.grid(column=3, row=4)
 
 ####---Scale Factor Loop----------------
 
-SF_row = 4
+SF_row = 5
 SF_column = 1
 
 SF_dic = {}
@@ -82,7 +109,7 @@ for i in SF_List:
 
 
 ####--Effort Multiplication Loop-----
-EM_row = 4
+EM_row = 5
 EM_column = 3
 
 EM_dic = {}
@@ -101,15 +128,14 @@ for i in EM_List:
     EM_row+=1
 
 
-
-
-
-
-
 PM_label = Label(text="PM: ")
 PM_label.grid(column=0, row=21)
+TDEV_Label = Label(text=f"TDEV: ")
+TDEV_Label.grid(column=0, row=22)
+TS_Label = Label(text="Team Size:")
+TS_Label.grid(column=0, row=23)
 
-generate_password_button = Button(text="Calculate PM", command=calculate_PM)
-generate_password_button.grid(column=0, row=23)
+generate_password_button = Button(text="Calculate", command=calculate_PM)
+generate_password_button.grid(column=0, row=28)
 
 window.mainloop()
