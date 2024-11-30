@@ -42,7 +42,6 @@ def calculate_PM():
     EM_Object.update_effort_multipliers(EM_values)
 
     EM_Effort_Multipliiers_result = EM_Object.calculate_effort_multiplier()
-    print(EM_Effort_Multipliiers_result)
 
     try:
         size_value = float(SIZE_Entry.get())  # Преобразуем введённое значение в float
@@ -57,7 +56,18 @@ def calculate_PM():
     PM_Print = Label(text=f"{PM_result:.2f}")
     PM_Print.grid(column=1, row=21)
 
+    calculate_cost(PM_result)
+
     calculate_TDEV(PM_result, E_Scale_Factor_result)
+
+def calculate_cost(effort_estimation):
+    try:
+        software_labor_rate = float(cost_entry.get())
+    except ValueError:
+        software_labor_rate = 0.0
+
+    cost_print = Label(text=f"${(effort_estimation * software_labor_rate):.2f}")
+    cost_print.grid(column=1, row=24)
 
 
 
@@ -81,6 +91,11 @@ SCED_label.grid(column=0, row=2)
 SCED_Entry = Entry(width=15)
 SCED_Entry.insert(0, 1) # Set default value
 SCED_Entry.grid(column=1, row=2)
+
+cost_label = Label(text="Cost per Person-Month(Dollars):")
+cost_label.grid(column=0, row=3)
+cost_entry = Entry(width=15)
+cost_entry.grid(column=1, row=3)
 
 SF_main = Label(window, text="Scale Factors")
 SF_main.grid(column=1, row=4)
@@ -134,6 +149,8 @@ TDEV_Label = Label(text=f"TDEV: ")
 TDEV_Label.grid(column=0, row=22)
 TS_Label = Label(text="Team Size:")
 TS_Label.grid(column=0, row=23)
+cost_label = Label(text="Cost: ")
+cost_label.grid(column=0, row=24)
 
 generate_password_button = Button(text="Calculate", command=calculate_PM)
 generate_password_button.grid(column=0, row=28)
