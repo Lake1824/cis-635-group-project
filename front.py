@@ -66,7 +66,7 @@ def calculate_cost(effort_estimation):
     except ValueError:
         software_labor_rate = 0.0
 
-    cost_print = Label(text=f"{(effort_estimation * software_labor_rate):.2f}")
+    cost_print = Label(text=f"${(effort_estimation * software_labor_rate):.2f}")
     cost_print.grid(column=1, row=24)
 
 
@@ -92,7 +92,7 @@ SCED_Entry = Entry(width=15)
 SCED_Entry.insert(0, 1) # Set default value
 SCED_Entry.grid(column=1, row=2)
 
-cost_label = Label(text="Cost per Person-Month:")
+cost_label = Label(text="Cost per Person-Month(Dollars):")
 cost_label.grid(column=0, row=3)
 cost_entry = Entry(width=15)
 cost_entry.grid(column=1, row=3)
