@@ -12,10 +12,8 @@ def calculate_TS(PM, TDEV):
     TS_Print = Label(text=f"{TS_Result:.2f}")
     TS_Print.grid(column=1, row=23)
 
-def calculate_TDEV(PM, E_Scale_Factor_result ):
-    SCED_value = float(SCED_Entry.get())
-
-    SE_Object = ScheduleEstimation(PM, E_Scale_Factor_result, SCED_value)
+def calculate_TDEV(PM, E_Scale_Factor_result, sced_value):
+    SE_Object = ScheduleEstimation(PM, E_Scale_Factor_result, sced_value)
     SE_Result = SE_Object.calculate()
     TDEV_Print= Label(text=f"{SE_Result:.2f}")
     TDEV_Print.grid(column=1, row=22)
@@ -58,7 +56,7 @@ def calculate_PM():
 
     calculate_cost(PM_result)
 
-    calculate_TDEV(PM_result, E_Scale_Factor_result)
+    calculate_TDEV(PM_result, E_Scale_Factor_result, EM_Object.SCED_VALUE)
 
 def calculate_cost(effort_estimation):
     try:
@@ -86,16 +84,10 @@ SIZE_Label.grid(column=0, row=1)
 SIZE_Entry = Entry(width=15)
 SIZE_Entry.grid(column=1, row=1)
 
-SCED_label = Label(text="SCED")
-SCED_label.grid(column=0, row=2)
-SCED_Entry = Entry(width=15)
-SCED_Entry.insert(0, 1) # Set default value
-SCED_Entry.grid(column=1, row=2)
-
 cost_label = Label(text="Cost per Person-Month(Dollars):")
-cost_label.grid(column=0, row=3)
+cost_label.grid(column=0, row=2)
 cost_entry = Entry(width=15)
-cost_entry.grid(column=1, row=3)
+cost_entry.grid(column=1, row=2)
 
 SF_main = Label(window, text="Scale Factors")
 SF_main.grid(column=1, row=4)

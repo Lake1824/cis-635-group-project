@@ -44,6 +44,9 @@ class EffortMultiplier:
         "SCED": {'very low': 1.43, 'low': 1.14, 'nominal': 1.00, 'high': 1.00, 'very high': 1.00, 'extra high': 0.00},
     }
 
+    # To use for TDEV calculation
+    SCED_VALUE = 1.0
+
     def __init__(self):
         # Initialize ratings to nominal
         self.ratings = {key: 'nominal' for key in self.EFFORT_MULTIPLIERS.keys()}
@@ -59,5 +62,10 @@ class EffortMultiplier:
         # Calculate and return the overall effort multiplier (EM)
         EM = 1.0
         for factor, rating in self.ratings.items():
-            EM *= self.EFFORT_MULTIPLIERS[factor].get(rating, 1)  # Default to 1 if rating is invalid
+            factor_value = self.EFFORT_MULTIPLIERS[factor].get(rating, 1)  # Default to 1 if rating is invalid
+            EM *= factor_value
+
+            if factor == "SCED":
+                self.SCED_VALUE = factor_value
+
         return EM
