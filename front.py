@@ -12,8 +12,10 @@ def calculate_TS(PM, TDEV):
     TS_Print = Label(text=f"{TS_Result:.2f}")
     TS_Print.grid(column=1, row=23)
 
-def calculate_TDEV(PM, E_Scale_Factor_result, sced_value):
-    SE_Object = ScheduleEstimation(PM, E_Scale_Factor_result, sced_value)
+def calculate_TDEV(PM, E_Scale_Factor_result ):
+    SCED_value = float(SCED_Entry.get())
+
+    SE_Object = ScheduleEstimation(PM, E_Scale_Factor_result, SCED_value)
     SE_Result = SE_Object.calculate()
     TDEV_Print= Label(text=f"{SE_Result:.2f}")
     TDEV_Print.grid(column=1, row=22)
@@ -40,6 +42,7 @@ def calculate_PM():
     EM_Object.update_effort_multipliers(EM_values)
 
     EM_Effort_Multipliiers_result = EM_Object.calculate_effort_multiplier()
+    print(EM_Effort_Multipliiers_result)
 
     try:
         size_value = float(SIZE_Entry.get())  # Преобразуем введённое значение в float
@@ -50,28 +53,20 @@ def calculate_PM():
                                  diseconomy_of_scale=E_Scale_Factor_result,
                                  effort_modifier=EM_Effort_Multipliiers_result)
     PM_result = EE_Object.calculate()
+    print(f"PM result: {PM_result}")
+    print(f"E: {E_Scale_Factor_result}")
+    print(f"EM: {EM_Effort_Multipliiers_result}")
 
     PM_Print = Label(text=f"{PM_result:.2f}")
     PM_Print.grid(column=1, row=21)
 
-    calculate_cost(PM_result)
-
-    calculate_TDEV(PM_result, E_Scale_Factor_result, EM_Object.SCED_VALUE)
-
-def calculate_cost(effort_estimation):
-    try:
-        software_labor_rate = float(cost_entry.get())
-    except ValueError:
-        software_labor_rate = 0.0
-
-    cost_print = Label(text=f"${(effort_estimation * software_labor_rate):.2f}")
-    cost_print.grid(column=1, row=24)
+    calculate_TDEV(PM_result, E_Scale_Factor_result)
 
 
 
 #---Main Window---
 window = Tk()
-window.title("COCOMO 2 Calculator")
+window.title("CoCoMo2 Calculator")
 window.geometry("700x700")
 
 SF_List = ["PREC", "FLEX", "RESL", "TEAM", "PMAT"]
@@ -84,10 +79,11 @@ SIZE_Label.grid(column=0, row=1)
 SIZE_Entry = Entry(width=15)
 SIZE_Entry.grid(column=1, row=1)
 
-cost_label = Label(text="Cost per Person-Month(Dollars):")
-cost_label.grid(column=0, row=2)
-cost_entry = Entry(width=15)
-cost_entry.grid(column=1, row=2)
+SCED_label = Label(text="SCED")
+SCED_label.grid(column=0, row=2)
+SCED_Entry = Entry(width=15)
+SCED_Entry.insert(0, 1) # Set default value
+SCED_Entry.grid(column=1, row=2)
 
 SF_main = Label(window, text="Scale Factors")
 SF_main.grid(column=1, row=4)
@@ -102,16 +98,17 @@ SF_column = 1
 
 SF_dic = {}
 for i in SF_List:
-    dropdown_SF = StringVar()
-    dropdown_SF.set("nominal")
+    SF_var = StringVar()
+    SF_var.set("nominal")
 
     SF_Label = Label(window, text=i)
     SF_Label.grid(column=0, row=SF_row)
-    dropdown_SF = ttk.Combobox(window, textvariable=dropdown_SF)
+    dropdown_SF = ttk.Combobox(window, textvariable=SF_var)
     dropdown_SF['values'] = ('extra high','very high',"high", 'nominal', "Low", "very low")
+    dropdown_SF.current(3)
     dropdown_SF.grid(column=SF_column, row=SF_row)
 
-    SF_dic[i] = dropdown_SF
+    SF_dic[i] = SF_var
     SF_row+=1
 
 
@@ -122,18 +119,21 @@ EM_column = 3
 EM_dic = {}
 
 for i in EM_List:
-    dropdown_EM = StringVar()
-    dropdown_EM.set("nominal")
+    EM_var = StringVar()
+    EM_var.set("nominal")
 
     EM_Label = Label(window, text=i)
     EM_Label.grid(column=2, row=EM_row)
-    dropdown_EM = ttk.Combobox(window, textvariable=dropdown_EM)
+    dropdown_EM = ttk.Combobox(window, textvariable=EM_var)
     dropdown_EM['values'] = ('extra high','very high',"high", 'nominal', "Low", "very low")
+    dropdown_EM.current(3)
     dropdown_EM.grid(column=EM_column, row=EM_row)
 
-    EM_dic[i] = dropdown_EM
+    EM_dic[i] = EM_var
     EM_row+=1
 
+for i, v in SF_dic.items():
+    print(f"{i} {v}")
 
 PM_label = Label(text="PM: ")
 PM_label.grid(column=0, row=21)
@@ -141,8 +141,6 @@ TDEV_Label = Label(text=f"TDEV: ")
 TDEV_Label.grid(column=0, row=22)
 TS_Label = Label(text="Team Size:")
 TS_Label.grid(column=0, row=23)
-cost_label = Label(text="Cost: ")
-cost_label.grid(column=0, row=24)
 
 generate_password_button = Button(text="Calculate", command=calculate_PM)
 generate_password_button.grid(column=0, row=28)
