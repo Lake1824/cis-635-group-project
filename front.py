@@ -1,5 +1,7 @@
 from tkinter import*
 from tkinter import ttk
+
+from equivalent_kloc import EquivalentKloc
 from process_scale_factors import DiseconomyOfScale
 from process_effort_multipliers import EffortMultiplier
 from effort_estimation import EffortEstimation
@@ -71,18 +73,32 @@ def calculate_cost(effort_estimation):
     cost_print = Label(text=f"${(effort_estimation * software_labor_rate):.2f}")
     cost_print.grid(column=1, row=24)
 
+def calculate_ekloc():
+    try:
+        equivalent_kloc_obj = EquivalentKloc(float(reuse_size_entry.get()), float(design_modified_entry.get()),
+                                             float(code_modified_entry.get()),
+                                             float(integration_required_entry.get()),
+                                             software_understanding_var.get(),
+                                             unfamiliarity_var.get(), aa_var.get(), float(at_percentage_entry.get()))
+        ekloc_size = equivalent_kloc_obj.calculate()
+    except ValueError:
+        ekloc_size = 0.00
+
+    ekloc_result = Label(text=f"{ekloc_size:.4f}")
+    ekloc_result.grid(column=1, row=30)
+
 
 #---Main Window---
 window = Tk()
 window.title("COCOMO 2 Calculator")
-window.geometry("700x700")
+window.geometry("1800x1800")
 
 SF_List = ["PREC", "FLEX", "RESL", "TEAM", "PMAT"]
 EM_List = ["RELY","DATA","CPLX","RUSE","DOCU","TIME","STOR","PVOL","ACAP",
            "PCAP","APEX","PLEX","LTEX","PCON","TOOL","SITE","SCED"]
 
 
-SIZE_Label = Label(text="Program Size(KLOC)")
+SIZE_Label = Label(text="Program Size(KLOC):")
 SIZE_Label.grid(column=0, row=1)
 SIZE_Entry = Entry(width=15)
 SIZE_Entry.grid(column=1, row=1)
@@ -148,10 +164,68 @@ TDEV_Label = Label(text=f"Schedule Estimation(TDEV): ")
 TDEV_Label.grid(column=0, row=22)
 TS_Label = Label(text="Team Size:")
 TS_Label.grid(column=0, row=23)
-cost_label = Label(text="Cost(Dollars): ")
-cost_label.grid(column=0, row=24)
+cost_result_label = Label(text="Cost(Dollars): ")
+cost_result_label.grid(column=0, row=24)
 
-generate_password_button = Button(text="Calculate", command=calculate_PM)
-generate_password_button.grid(column=0, row=28)
+calculate_button = Button(text="Calculate", command=calculate_PM)
+calculate_button.grid(column=0, row=25)
+
+reuse_size_label = Label(text="Calculate Equivalent KLOC",font=('Helvetica', 12, 'bold'))
+reuse_size_label.grid(column=0, row=26)
+
+reuse_size_label = Label(text="Adapted Size(KLOC):")
+reuse_size_label.grid(column=0, row=27)
+reuse_size_entry = Entry(width=15)
+reuse_size_entry.grid(column=1, row=27)
+
+design_modified_label = Label(text="Design Modified %:")
+design_modified_label.grid(column=0, row=28)
+design_modified_entry = Entry(width=15)
+design_modified_entry.grid(column=1, row=28)
+
+code_modified_label = Label(text="Code Modified %:")
+code_modified_label.grid(column=2, row=28)
+code_modified_entry = Entry(width=15)
+code_modified_entry.grid(column=3, row=28)
+
+integration_required_label = Label(text="Integration Required %:")
+integration_required_label.grid(column=4, row=28)
+integration_required_entry = Entry(width=15)
+integration_required_entry.grid(column=5, row=28)
+
+at_percentage_label = Label(text="Code Re-Engineered By Automatic Translation %:")
+at_percentage_label.grid(column=6, row=28)
+at_percentage_entry = Entry(width=15)
+at_percentage_entry.grid(column=7, row=28)
+
+software_understanding_label = Label(text="Software Understanding Increment:")
+software_understanding_label.grid(column=0, row=29)
+software_understanding_var = StringVar(value="nominal")
+software_understanding_dropdown = ttk.Combobox(window, textvariable=software_understanding_var)
+software_understanding_dropdown['values'] = ('very low', 'low', 'nominal', 'high', 'very high')
+software_understanding_dropdown.current(2)
+software_understanding_dropdown.grid(column=1, row=29)
+
+unfamiliarity_label = Label(text="Programmer Unfamiliarity:")
+unfamiliarity_label.grid(column=2, row=29)
+unfamiliarity_var = StringVar(value='completely familiar')
+unfamiliarity_dropdown = ttk.Combobox(window, textvariable=unfamiliarity_var)
+unfamiliarity_dropdown['values'] = ('completely familiar', 'mostly familiar', 'somewhat familiar', 'considerably familiar', 'mostly unfamiliar', 'completely unfamiliar')
+unfamiliarity_dropdown.current(0)
+unfamiliarity_dropdown.grid(column=3, row=29)
+
+aa_label = Label(text="Assessment and Assimilation Increment:")
+aa_label.grid(column=4, row=29)
+aa_var = StringVar(value="none")
+aa_dropdown = ttk.Combobox(window, textvariable=aa_var)
+aa_dropdown['values'] = ('none', 'basic module search and documentation', 'some T&E, documentation', 'considerable T&E, documentation', 'extensive T&E, documentation')
+aa_dropdown.current(2)
+aa_dropdown.grid(column=5, row=29)
+
+ekloc_result_label = Label(text="Equivalent KLOC: ")
+ekloc_result_label.grid(column=0, row=30)
+
+calculate_ekloc_button = Button(text="Calculate", command=calculate_ekloc)
+calculate_ekloc_button.grid(column=0, row=31)
 
 window.mainloop()
