@@ -12,10 +12,9 @@ def calculate_TS(PM, TDEV):
     TS_Print = Label(text=f"{TS_Result:.2f}")
     TS_Print.grid(column=1, row=23)
 
-def calculate_TDEV(PM, E_Scale_Factor_result ):
-    SCED_value = float(SCED_Entry.get())
+def calculate_TDEV(PM, E_Scale_Factor_result, sced_value):
+    SE_Object = ScheduleEstimation(PM, E_Scale_Factor_result, sced_value)
 
-    SE_Object = ScheduleEstimation(PM, E_Scale_Factor_result, SCED_value)
     SE_Result = SE_Object.calculate()
     TDEV_Print= Label(text=f"{SE_Result:.2f}")
     TDEV_Print.grid(column=1, row=22)
@@ -60,13 +59,22 @@ def calculate_PM():
     PM_Print = Label(text=f"{PM_result:.2f}")
     PM_Print.grid(column=1, row=21)
 
-    calculate_TDEV(PM_result, E_Scale_Factor_result)
+    calculate_cost(PM_result)
 
+    calculate_TDEV(PM_result, E_Scale_Factor_result, sced_value=EM_Object.SCED_VALUE)
+
+def calculate_cost(effort_estimation):
+    try:
+        software_labor_rate = float(cost_entry.get())
+    except ValueError:
+        software_labor_rate = 0.0
+    cost_print = Label(text=f"${(effort_estimation * software_labor_rate):.2f}")
+    cost_print.grid(column=1, row=24)
 
 
 #---Main Window---
 window = Tk()
-window.title("CoCoMo2 Calculator")
+window.title("COCOMO 2 Calculator")
 window.geometry("700x700")
 
 SF_List = ["PREC", "FLEX", "RESL", "TEAM", "PMAT"]
@@ -74,21 +82,20 @@ EM_List = ["RELY","DATA","CPLX","RUSE","DOCU","TIME","STOR","PVOL","ACAP",
            "PCAP","APEX","PLEX","LTEX","PCON","TOOL","SITE","SCED"]
 
 
-SIZE_Label = Label(text="SIZE")
+SIZE_Label = Label(text="Program Size(KLOC)")
 SIZE_Label.grid(column=0, row=1)
 SIZE_Entry = Entry(width=15)
 SIZE_Entry.grid(column=1, row=1)
 
-SCED_label = Label(text="SCED")
-SCED_label.grid(column=0, row=2)
-SCED_Entry = Entry(width=15)
-SCED_Entry.insert(0, 1) # Set default value
-SCED_Entry.grid(column=1, row=2)
+cost_label = Label(text="Cost per Person-Month(Dollars):")
+cost_label.grid(column=0, row=2)
+cost_entry = Entry(width=15)
+cost_entry.grid(column=1, row=2)
 
 SF_main = Label(window, text="Scale Factors")
 SF_main.grid(column=1, row=4)
 
-EM_main = Label(window, text="Effort Multiplication")
+EM_main = Label(window, text="Effort Multipliers")
 EM_main.grid(column=3, row=4)
 
 ####---Scale Factor Loop----------------
@@ -104,7 +111,7 @@ for i in SF_List:
     SF_Label = Label(window, text=i)
     SF_Label.grid(column=0, row=SF_row)
     dropdown_SF = ttk.Combobox(window, textvariable=SF_var)
-    dropdown_SF['values'] = ('extra high','very high',"high", 'nominal', "Low", "very low")
+    dropdown_SF['values'] = ('extra high','very high',"high", 'nominal', "low", "very low")
     dropdown_SF.current(3)
     dropdown_SF.grid(column=SF_column, row=SF_row)
 
@@ -125,7 +132,7 @@ for i in EM_List:
     EM_Label = Label(window, text=i)
     EM_Label.grid(column=2, row=EM_row)
     dropdown_EM = ttk.Combobox(window, textvariable=EM_var)
-    dropdown_EM['values'] = ('extra high','very high',"high", 'nominal', "Low", "very low")
+    dropdown_EM['values'] = ('extra high','very high',"high", 'nominal', "low", "very low")
     dropdown_EM.current(3)
     dropdown_EM.grid(column=EM_column, row=EM_row)
 
@@ -135,12 +142,14 @@ for i in EM_List:
 for i, v in SF_dic.items():
     print(f"{i} {v}")
 
-PM_label = Label(text="PM: ")
+PM_label = Label(text="Effort Estimation(PM): ")
 PM_label.grid(column=0, row=21)
-TDEV_Label = Label(text=f"TDEV: ")
+TDEV_Label = Label(text=f"Schedule Estimation(TDEV): ")
 TDEV_Label.grid(column=0, row=22)
 TS_Label = Label(text="Team Size:")
 TS_Label.grid(column=0, row=23)
+cost_label = Label(text="Cost(Dollars): ")
+cost_label.grid(column=0, row=24)
 
 generate_password_button = Button(text="Calculate", command=calculate_PM)
 generate_password_button.grid(column=0, row=28)
